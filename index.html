@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+     <meta charset="UTF-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <title>Smart Quiz App</title>
+     <!-- Tailwind CSS CDN -->
+     <script src="https://cdn.tailwindcss.com"></script>
+     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+     <!-- Font Awesome for icons -->
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+     <style>
+          body {
+               font-family: 'Inter', sans-serif;
+               background-color: #f3f4f6;
+               color: #1f2937;
+               display: flex;
+               flex-direction: column;
+               justify-content: center;
+               align-items: center;
+               min-height: 100vh;
+               margin: 0;
+               padding: 0;
+               box-sizing: border-box;
+               background-image: linear-gradient(to bottom, #d6d6f5, #f0f4ff);
+          }
+
+          .app-container {
+               width: 100%;
+               max-width: 480px;
+               background-color: transparent;
+               border-radius: 2rem;
+               box-shadow: none;
+               padding: 1.5rem;
+               box-sizing: border-box;
+          }
+
+          .hidden {
+               display: none;
+          }
+
+          .fade-in {
+               animation: fadeIn 0.5s ease-in-out;
+          }
+
+          @keyframes fadeIn {
+               from {
+                    opacity: 0;
+               }
+
+               to {
+                    opacity: 1;
+               }
+          }
+     </style>
+</head>
+
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+     <div class="app-container">
+
+          <!-- Message Box -->
+          <div id="message-box"
+               class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+               <div class="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full text-center">
+                    <p id="message-text" class="text-lg font-semibold mb-4"></p>
+                    <div class="flex justify-center space-x-4">
+                         <button id="ok-button"
+                              class="bg-blue-600 text-white px-6 py-2 rounded-full hover:bg-blue-700 transition-colors">OK</button>
+                         <button id="cancel-button"
+                              class="bg-gray-300 text-gray-800 px-6 py-2 rounded-full hover:bg-gray-400 transition-colors hidden">Cancel</button>
+                    </div>
+               </div>
+          </div>
+
+          <!-- Password Recovery Box -->
+          <div id="password-recovery-box"
+               class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+               <div class="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full">
+                    <h3 class="text-xl font-bold mb-4">Password Recovery</h3>
+                    <p class="text-gray-600 mb-4">Enter your email to receive a password reset link.</p>
+                    <input type="email" id="recovery-email" placeholder="Your Email"
+                         class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-3 focus:ring-indigo-500 focus:border-indigo-500 mb-4"
+                         required>
+                    <div class="flex justify-end space-x-4">
+                         <button id="recover-submit-btn"
+                              class="bg-indigo-600 text-white px-6 py-2 rounded-full hover:bg-indigo-700 transition-colors">Submit</button>
+                         <button id="recover-cancel-btn"
+                              class="bg-gray-300 text-gray-800 px-6 py-2 rounded-full hover:bg-gray-400 transition-colors">Cancel</button>
+                    </div>
+               </div>
+          </div>
+
+          <!-- Role Selection Section -->
+          <div id="role-selection-section" class="bg-white p-8 rounded-2xl shadow-lg fade-in">
+               <h1 class="text-3xl font-bold text-center mb-2 text-indigo-700">Smart Quiz App</h1>
+               <p class="text-center text-gray-600 mb-8">Challenge Your Mind, Test Your Knowledge</p>
+               <p class="text-center text-gray-600 mb-8">Please select your role to continue.</p>
+               <div class="flex flex-col space-y-4">
+                    <button id="select-teacher-btn"
+                         class="w-full bg-indigo-600 text-white font-semibold py-4 px-6 rounded-full hover:bg-indigo-700 transition-transform transform hover:scale-105 shadow-md"
+                         data-role="teacher">
+                         <i class="fas fa-chalkboard-teacher mr-2"></i> Teacher
+                    </button>
+                    <button id="select-student-btn"
+                         class="w-full bg-teal-500 text-white font-semibold py-4 px-6 rounded-full hover:bg-teal-600 transition-transform transform hover:scale-105 shadow-md"
+                         data-role="student">
+                         <i class="fas fa-user-graduate mr-2"></i> Student
+                    </button>
+                    <button id="select-general-btn"
+                         class="w-full bg-green-500 text-white font-semibold py-4 px-6 rounded-full hover:bg-green-600 transition-transform transform hover:scale-105 shadow-md"
+                         data-role="general">
+                         <i class="fas fa-users mr-2"></i> General User
+                    </button>
+               </div>
+          </div>
+
+          <!-- Login/Register Choice Section -->
+          <div id="auth-choice-section" class="bg-white p-8 rounded-2xl shadow-lg hidden fade-in">
+               <h2 id="auth-choice-title" class="text-2xl font-bold text-center mb-6 text-indigo-700"></h2>
+               <div class="flex flex-col space-y-4">
+                    <button id="goto-login-btn"
+                         class="w-full bg-indigo-600 text-white font-semibold py-4 px-6 rounded-full hover:bg-indigo-700 transition-transform transform hover:scale-105 shadow-md">
+                         <i class="fas fa-sign-in-alt mr-2"></i> Login
+                    </button>
+                    <button id="goto-register-btn"
+                         class="w-full bg-green-500 text-white font-semibold py-4 px-6 rounded-full hover:bg-green-600 transition-transform transform hover:scale-105 shadow-md">
+                         <i class="fas fa-user-plus mr-2"></i> Register
+                    </button>
+               </div>
+               <div class="text-center mt-6">
+                    <button id="auth-choice-back-btn"
+                         class="text-sm text-gray-500 hover:text-gray-700 transition-colors">Back to role
+                         selection</button>
+               </div>
+          </div>
+
+          <!-- Login Section -->
+          <div id="login-section" class="bg-white p-8 rounded-2xl shadow-lg hidden fade-in">
+               <h2 id="login-title" class="text-2xl font-bold text-center mb-6 text-indigo-700">Login</h2>
+               <form id="login-form" class="space-y-4">
+                    <div>
+                         <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+                         <input type="email" id="email" name="email"
+                              class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-3 focus:ring-indigo-500 focus:border-indigo-500"
+                              required>
+                    </div>
+                    <div>
+                         <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+                         <input type="password" id="password" name="password"
+                              class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-3 focus:ring-indigo-500 focus:border-indigo-500"
+                              required>
+                    </div>
+                    <button type="submit"
+                         class="w-full bg-indigo-600 text-white font-semibold py-3 px-4 rounded-full hover:bg-indigo-700 transition-transform transform hover:scale-105 shadow-md">Login</button>
+               </form>
+               <div class="text-center mt-6 flex justify-between">
+                    <button id="forgot-password-btn"
+                         class="text-sm text-gray-500 hover:text-gray-700 transition-colors">Forgot Password?</button>
+                    <button id="back-to-auth-choice"
+                         class="text-sm text-gray-500 hover:text-gray-700 transition-colors">Back</button>
+               </div>
+          </div>
+
+          <!-- Registration Section -->
+          <div id="register-section" class="bg-white p-8 rounded-2xl shadow-lg hidden fade-in">
+               <h2 id="register-title" class="text-2xl font-bold text-center mb-6 text-indigo-700">Register</h2>
+               <form id="register-form" class="space-y-4">
+                    <div>
+                         <label for="register-name" class="block text-sm font-medium text-gray-700">Name</label>
+                         <input type="text" id="register-name" name="name"
+                              class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-3 focus:ring-indigo-500 focus:border-indigo-500"
+                              required>
+                    </div>
+                    <div>
+                         <label for="register-email" class="block text-sm font-medium text-gray-700">Email</label>
+                         <input type="email" id="register-email" name="email"
+                              class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-3 focus:ring-indigo-500 focus:border-indigo-500"
+                              required>
+                    </div>
+                    <div>
+                         <label for="register-password" class="block text-sm font-medium text-gray-700">Password</label>
+                         <input type="password" id="register-password" name="password"
+                              class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-3 focus:ring-indigo-500 focus:border-indigo-500"
+                              required>
+                    </div>
+                    <button type="submit"
+                         class="w-full bg-green-600 text-white font-semibold py-3 px-4 rounded-full hover:bg-green-700 transition-transform transform hover:scale-105 shadow-md">Register</button>
+               </form>
+               <div class="text-center mt-6">
+                    <button id="back-to-auth-choice-from-register"
+                         class="text-sm text-gray-500 hover:text-gray-700 transition-colors">Back</button>
+               </div>
+          </div>
+
+
+          <!-- Teacher Dashboard Section -->
+          <div id="teacher-dashboard" class="bg-white p-8 rounded-2xl shadow-lg hidden fade-in">
+               <div class="flex justify-between items-center mb-4">
+                    <div>
+                         <h2 id="teacher-welcome-text" class="text-2xl font-bold text-indigo-700"></h2>
+                         <p class="text-sm text-gray-500">Role: Teacher</p>
+                    </div>
+                    <button id="teacher-logout-btn" class="text-gray-500 hover:text-red-500 transition-colors"><i
+                              class="fas fa-sign-out-alt"></i></button>
+               </div>
+               <div class="flex flex-col space-y-4 mb-6">
+                    <button id="create-quiz-btn"
+                         class="w-full bg-green-500 text-white font-semibold py-3 px-4 rounded-full hover:bg-green-600 transition-transform transform hover:scale-105 shadow-md">
+                         <i class="fas fa-plus-circle mr-2"></i> Create New Quiz
+                    </button>
+                    <button id="manage-quizzes-btn"
+                         class="w-full bg-blue-500 text-white font-semibold py-3 px-4 rounded-full hover:bg-blue-600 transition-transform transform hover:scale-105 shadow-md">
+                         <i class="fas fa-list-alt mr-2"></i> Manage My Quizzes
+                    </button>
+               </div>
+          </div>
+
+          <!-- Student/General User Dashboard Section -->
+          <div id="user-dashboard" class="bg-white p-8 rounded-2xl shadow-lg hidden fade-in">
+               <div class="flex justify-between items-center mb-4">
+                    <div>
+                         <h2 id="user-welcome-text" class="text-2xl font-bold text-indigo-700"></h2>
+                         <p id="user-role-text" class="text-sm text-gray-500"></p>
+                    </div>
+                    <div class="flex space-x-2">
+                         <button id="user-profile-btn" class="text-gray-500 hover:text-indigo-500 transition-colors"><i
+                                   class="fas fa-user-circle"></i></button>
+                         <button id="user-logout-btn" class="text-gray-500 hover:text-red-500 transition-colors"><i
+                                   class="fas fa-sign-out-alt"></i></button>
+                    </div>
+               </div>
+               <h3 class="text-xl font-bold mb-4">Available Quizzes</h3>
+               <div id="user-quiz-list-container" class="space-y-4">
+                    <!-- Quizzes for the user's role will be loaded here -->
+               </div>
+          </div>
+
+          <!-- User Profile Section -->
+          <div id="profile-section" class="bg-white p-8 rounded-2xl shadow-lg hidden fade-in">
+               <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold text-indigo-700">My Profile</h2>
+                    <button id="profile-back-btn" class="text-gray-500 hover:text-gray-700 transition-colors"><i
+                              class="fas fa-arrow-left"></i></button>
+               </div>
+               <div class="space-y-4">
+                    <div class="flex items-center space-x-4">
+                         <i class="fas fa-user-circle text-4xl text-gray-400"></i>
+                         <div>
+                              <h3 id="profile-username" class="text-xl font-semibold"></h3>
+                              <p id="profile-email" class="text-sm text-gray-500"></p>
+                         </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                         <div class="bg-gray-100 p-4 rounded-lg text-center">
+                              <p class="text-2xl font-bold text-indigo-600" id="profile-quizzes-taken">0</p>
+                              <p class="text-sm text-gray-500">Quizzes Taken</p>
+                         </div>
+                         <div class="bg-gray-100 p-4 rounded-lg text-center">
+                              <p class="text-2xl font-bold text-teal-600" id="profile-average-score">0%</p>
+                              <p class="text-sm text-gray-500">Average Score</p>
+                         </div>
+                    </div>
+                    <h4 class="text-lg font-semibold mt-6">My Recent Quiz History</h4>
+                    <div id="profile-quiz-history" class="space-y-2 max-h-48 overflow-y-auto">
+                         <!-- History will be loaded here -->
+                    </div>
+               </div>
+          </div>
+
+          <!-- Create/Edit Quiz Section -->
+          <div id="quiz-editor-section" class="bg-white p-8 rounded-2xl shadow-lg hidden fade-in">
+               <h2 id="editor-title" class="text-2xl font-bold text-center mb-6 text-indigo-700">Create Quiz</h2>
+               <form id="quiz-editor-form" class="space-y-4">
+                    <div>
+                         <label for="quiz-title" class="block text-sm font-medium text-gray-700">Quiz Title</label>
+                         <input type="text" id="quiz-title" name="quiz-title"
+                              class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-3" required>
+                    </div>
+                    <div>
+                         <label for="quiz-difficulty" class="block text-sm font-medium text-gray-700">Difficulty</label>
+                         <select id="quiz-difficulty" name="quiz-difficulty"
+                              class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-3" required>
+                              <option value="Easy">Easy</option>
+                              <option value="Medium">Medium</option>
+                              <option value="Hard">Hard</option>
+                         </select>
+                    </div>
+                    <div>
+                         <label for="quiz-target-role" class="block text-sm font-medium text-gray-700">Target
+                              Audience</label>
+                         <select id="quiz-target-role" name="quiz-target-role"
+                              class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-3" required>
+                              <option value="student">Student</option>
+                              <option value="general">General User</option>
+                         </select>
+                    </div>
+                    <div id="questions-container" class="space-y-4">
+                         <!-- Questions will be added here -->
+                    </div>
+                    <button type="button" id="add-question-btn"
+                         class="w-full bg-gray-200 text-gray-700 font-semibold py-2 px-4 rounded-full hover:bg-gray-300 transition-colors">
+                         <i class="fas fa-plus mr-2"></i> Add Question
+                    </button>
+                    <button type="submit"
+                         class="w-full bg-indigo-600 text-white font-semibold py-3 px-4 rounded-full hover:bg-indigo-700 transition-transform transform hover:scale-105 shadow-md">Save
+                         Quiz</button>
+                    <button type="button" id="cancel-editor-btn"
+                         class="w-full bg-gray-400 text-white font-semibold py-3 px-4 rounded-full hover:bg-gray-500 transition-colors">Cancel</button>
+               </form>
+          </div>
+
+          <!-- Admin Quiz List Section (for teachers) -->
+          <div id="admin-quiz-list-section" class="bg-white p-8 rounded-2xl shadow-lg hidden fade-in">
+               <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-2xl font-bold text-indigo-700">Manage Quizzes</h2>
+                    <button id="admin-back-btn" class="text-gray-500 hover:text-gray-700 transition-colors"><i
+                              class="fas fa-arrow-left"></i></button>
+               </div>
+               <div id="admin-quiz-list" class="space-y-4">
+                    <!-- Quizzes will be listed here -->
+               </div>
+          </div>
+
+          <!-- Quiz Section -->
+          <div id="quiz-section" class="bg-white p-8 rounded-2xl shadow-lg hidden fade-in">
+               <div class="flex justify-between items-center mb-4">
+                    <h2 id="quiz-title-display" class="text-xl font-bold text-indigo-700"></h2>
+                    <div class="flex items-center space-x-2">
+                         <i class="fas fa-clock text-gray-500"></i>
+                         <span id="quiz-timer" class="font-bold text-lg text-gray-700"></span>
+                         <button id="quiz-back-btn" class="text-gray-500 hover:text-gray-700 transition-colors"><i
+                                   class="fas fa-arrow-left"></i></button>
+                    </div>
+               </div>
+               <div id="quiz-progress" class="w-full bg-gray-200 rounded-full h-2.5 mb-4">
+                    <div id="progress-bar" class="bg-indigo-600 h-2.5 rounded-full" style="width: 0%;"></div>
+               </div>
+               <div id="quiz-question" class="mb-4">
+                    <p id="question-text" class="text-lg font-semibold mb-2"></p>
+                    <div id="options-container" class="space-y-2">
+                         <!-- Options will be dynamically loaded here -->
+                    </div>
+               </div>
+          </div>
+
+          <!-- Quiz Result Section -->
+          <div id="result-section" class="bg-white p-8 rounded-2xl shadow-lg text-center hidden fade-in">
+               <h2 class="text-2xl font-bold mb-4 text-indigo-700">Quiz Result</h2>
+               <p class="text-xl mb-2">You scored <span id="score-display" class="font-bold text-green-600"></span> out
+                    of <span id="total-questions-display" class="font-bold"></span></p>
+               <p id="result-message" class="text-lg mb-6"></p>
+               <button id="retake-quiz-btn"
+                    class="bg-blue-600 text-white font-semibold py-2 px-6 rounded-full hover:bg-blue-700 transition-colors">Retake
+                    Quiz</button>
+               <button id="back-to-main-btn"
+                    class="bg-gray-400 text-white font-semibold py-2 px-6 rounded-full hover:bg-gray-500 transition-colors ml-2">Back
+                    to Quizzes</button>
+          </div>
+     </div>
+
+     <script>
+          // Data Storage
+          let users = JSON.parse(localStorage.getItem('userData')) || [
+               { email: 'teacher@example.com', password: 'password', role: 'teacher', name: 'Professor Smith', quizzesTaken: [] },
+               { email: 'student@example.com', password: 'password', role: 'student', name: 'Jane Doe', quizzesTaken: [] },
+               { email: 'general@example.com', password: 'password', role: 'general', name: 'Alex', quizzesTaken: [] }
+          ];
+          let quizzes = JSON.parse(localStorage.getItem('quizData')) || [
+               { id: 'q1', title: 'General Knowledge Quiz', category: 'General Knowledge', difficulty: 'Easy', questions: [{ question: 'What is the capital of France?', options: ['Berlin', 'Madrid', 'Paris', 'Rome'], answer: 'Paris' }, { question: 'Which planet is known as the Red Planet?', options: ['Earth', 'Mars', 'Jupiter', 'Venus'], answer: 'Mars' },], authorId: 'teacher@example.com', targetRole: 'general' },
+               { id: 'q2', title: 'Introduction to Biology', category: 'Science', difficulty: 'Medium', questions: [{ question: 'What is the powerhouse of the cell?', options: ['Nucleus', 'Mitochondria', 'Ribosome', 'Cytoplasm'], answer: 'Mitochondria' }, { question: 'What is the longest bone in the human body?', options: ['Tibia', 'Radius', 'Femur', 'Humerus'], answer: 'Femur' },], authorId: 'teacher@example.com', targetRole: 'student' },
+               { id: 'q3', title: 'History of Ancient Rome', category: 'History', difficulty: 'Hard', questions: [{ question: 'Who was the first Roman emperor?', options: ['Julius Caesar', 'Augustus', 'Nero', 'Caligula'], answer: 'Augustus' }, { question: 'What was the Colosseum primarily used for?', options: ['Political meetings', 'Gladiatorial contests', 'Public baths', 'Chariot races'], answer: 'Gladiatorial contests' },], authorId: 'teacher@example.com', targetRole: 'student' },
+          ];
+
+          // Global State
+          let currentUser = null;
+          let currentQuiz = null;
+          let currentQuestionIndex = 0;
+          let userAnswers = [];
+          let loginRole = null;
+          let timer = null;
+          const QUIZ_DURATION = 60; // 60 seconds per quiz
+
+          // DOM Elements
+          const sections = document.querySelectorAll('body > div.app-container > div');
+          const roleSelectionSection = document.getElementById('role-selection-section');
+          const authChoiceSection = document.getElementById('auth-choice-section');
+          const authChoiceTitle = document.getElementById('auth-choice-title');
+          const loginSection = document.getElementById('login-section');
+          const loginTitle = document.getElementById('login-title');
+          const loginForm = document.getElementById('login-form');
+          const registerSection = document.getElementById('register-section');
+          const registerForm = document.getElementById('register-form');
+          const teacherDashboard = document.getElementById('teacher-dashboard');
+          const userDashboard = document.getElementById('user-dashboard');
+          const profileSection = document.getElementById('profile-section');
+          const quizEditorSection = document.getElementById('quiz-editor-section');
+          const editorTitle = document.getElementById('editor-title');
+          const quizEditorForm = document.getElementById('quiz-editor-form');
+          const quizTitleInput = document.getElementById('quiz-title');
+          const quizDifficultyInput = document.getElementById('quiz-difficulty');
+          const quizTargetRoleSelect = document.getElementById('quiz-target-role');
+          const questionsContainer = document.getElementById('questions-container');
+          const adminQuizListSection = document.getElementById('admin-quiz-list-section');
+          const adminQuizList = document.getElementById('admin-quiz-list');
+          const quizSection = document.getElementById('quiz-section');
+          const quizTitleDisplay = document.getElementById('quiz-title-display');
+          const progressBar = document.getElementById('progress-bar');
+          const questionText = document.getElementById('question-text');
+          const optionsContainer = document.getElementById('options-container');
+          const quizTimerDisplay = document.getElementById('quiz-timer');
+          const resultSection = document.getElementById('result-section');
+          const scoreDisplay = document.getElementById('score-display');
+          const totalQuestionsDisplay = document.getElementById('total-questions-display');
+          const resultMessage = document.getElementById('result-message');
+          const messageBox = document.getElementById('message-box');
+          const messageText = document.getElementById('message-text');
+          const okButton = document.getElementById('ok-button');
+          const cancelButton = document.getElementById('cancel-button');
+          const passwordRecoveryBox = document.getElementById('password-recovery-box');
+          const recoveryEmailInput = document.getElementById('recovery-email');
+          const teacherWelcomeText = document.getElementById('teacher-welcome-text');
+          const userWelcomeText = document.getElementById('user-welcome-text');
+          const userRoleText = document.getElementById('user-role-text');
+          const userQuizListContainer = document.getElementById('user-quiz-list-container');
+
+
+          // --- Utility Functions ---
+          function hideAllSections() {
+               sections.forEach(section => section.classList.add('hidden'));
+          }
+
+          function showMessageBox(message, callback = null) {
+               messageText.textContent = message;
+               messageBox.classList.remove('hidden');
+               if (callback) {
+                    cancelButton.classList.remove('hidden');
+                    okButton.onclick = () => {
+                         messageBox.classList.add('hidden');
+                         callback(true);
+                    };
+                    cancelButton.onclick = () => {
+                         messageBox.classList.add('hidden');
+                         callback(false);
+                    };
+               } else {
+                    cancelButton.classList.add('hidden');
+                    okButton.onclick = () => {
+                         messageBox.classList.add('hidden');
+                    };
+               }
+          }
+
+          function generateId() {
+               return '_' + Math.random().toString(36).substr(2, 9);
+          }
+
+          function clearAuthForms() {
+               document.getElementById('email').value = '';
+               document.getElementById('password').value = '';
+               document.getElementById('register-name').value = '';
+               document.getElementById('register-email').value = '';
+               document.getElementById('register-password').value = '';
+          }
+
+          // --- Navigation Functions ---
+          function showRoleSelection() {
+               hideAllSections();
+               roleSelectionSection.classList.remove('hidden');
+               clearAuthForms();
+          }
+
+          function showAuthChoice(role) {
+               loginRole = role;
+               const roleName = role.charAt(0).toUpperCase() + role.slice(1);
+               authChoiceTitle.textContent = `${roleName} Account`;
+               hideAllSections();
+               authChoiceSection.classList.remove('hidden');
+               clearAuthForms();
+          }
+
+          function showLogin() {
+               hideAllSections();
+               loginSection.classList.remove('hidden');
+               clearAuthForms();
+          }
+
+          function showRegistration() {
+               hideAllSections();
+               registerSection.classList.remove('hidden');
+               clearAuthForms();
+          }
+
+          function showTeacherDashboard() {
+               hideAllSections();
+               teacherDashboard.classList.remove('hidden');
+               teacherWelcomeText.textContent = `Welcome, ${currentUser.name}`;
+               clearAuthForms();
+          }
+
+          function showUserDashboard() {
+               hideAllSections();
+               userDashboard.classList.remove('hidden');
+               userWelcomeText.textContent = `Welcome, ${currentUser.name}`;
+               userRoleText.textContent = `Role: ${currentUser.role.charAt(0).toUpperCase() + currentUser.role.slice(1)}`;
+               loadUserQuizList();
+               clearAuthForms();
+          }
+
+          function showProfileSection() {
+               hideAllSections();
+               profileSection.classList.remove('hidden');
+               document.getElementById('profile-username').textContent = currentUser.name;
+               document.getElementById('profile-email').textContent = currentUser.email;
+
+               const quizzesTakenCount = currentUser.quizzesTaken ? currentUser.quizzesTaken.length : 0;
+               document.getElementById('profile-quizzes-taken').textContent = quizzesTakenCount;
+
+               const totalScore = currentUser.quizzesTaken.reduce((sum, quiz) => sum + quiz.score, 0);
+               const averageScore = quizzesTakenCount > 0 ? (totalScore / quizzesTakenCount).toFixed(1) : 0;
+               document.getElementById('profile-average-score').textContent = `${averageScore}%`;
+
+               const historyContainer = document.getElementById('profile-quiz-history');
+               historyContainer.innerHTML = '';
+               if (quizzesTakenCount === 0) {
+                    historyContainer.innerHTML = '<p class="text-center text-gray-500">No quizzes taken yet.</p>';
+               } else {
+                    currentUser.quizzesTaken.forEach(quiz => {
+                         const quizHistoryItem = document.createElement('div');
+                         quizHistoryItem.className = 'bg-gray-100 p-3 rounded-lg flex justify-between items-center';
+                         quizHistoryItem.innerHTML = `
+                        <div>
+                            <p class="font-semibold text-gray-800">${quiz.title}</p>
+                            <p class="text-sm text-gray-500">Score: ${quiz.score}/${quiz.totalQuestions} (${(quiz.score / quiz.totalQuestions * 100).toFixed(0)}%)</p>
+                        </div>
+                        <p class="text-xs text-gray-400">${quiz.date}</p>
+                    `;
+                         historyContainer.appendChild(quizHistoryItem);
+                    });
+               }
+          }
+
+          function showQuizEditor(quiz = null) {
+               hideAllSections();
+               quizEditorSection.classList.remove('hidden');
+               if (quiz) {
+                    editorTitle.textContent = 'Edit Quiz';
+                    quizEditorForm.dataset.quizId = quiz.id;
+                    quizTitleInput.value = quiz.title;
+                    quizDifficultyInput.value = quiz.difficulty;
+                    quizTargetRoleSelect.value = quiz.targetRole || 'student'; // Set default for existing quizzes
+                    questionsContainer.innerHTML = '';
+                    quiz.questions.forEach(q => addQuestionToEditor(q));
+               } else {
+                    editorTitle.textContent = 'Create Quiz';
+                    delete quizEditorForm.dataset.quizId;
+                    quizTitleInput.value = '';
+                    quizDifficultyInput.value = 'Easy';
+                    quizTargetRoleSelect.value = 'student';
+                    questionsContainer.innerHTML = '';
+                    addQuestionToEditor();
+               }
+          }
+
+          function showAdminQuizList() {
+               hideAllSections();
+               adminQuizListSection.classList.remove('hidden');
+               loadAdminQuizList();
+          }
+
+          function showQuizSection() {
+               hideAllSections();
+               quizSection.classList.remove('hidden');
+               currentQuestionIndex = 0;
+               userAnswers = Array(currentQuiz.questions.length).fill(null);
+               startTimer();
+               loadQuestion();
+          }
+
+          function showResultSection(score, totalQuestions) {
+               hideAllSections();
+               resultSection.classList.remove('hidden');
+               scoreDisplay.textContent = score;
+               totalQuestionsDisplay.textContent = totalQuestions;
+               if (score === totalQuestions) {
+                    resultMessage.textContent = 'Congratulations! You got a perfect score!';
+               } else if (score > totalQuestions / 2) {
+                    resultMessage.textContent = 'Well done! You passed the quiz.';
+               } else {
+                    resultMessage.textContent = 'You can do better! Keep practicing.';
+               }
+
+               // Save score to user profile
+               const userIndex = users.findIndex(u => u.email === currentUser.email);
+               if (userIndex !== -1) {
+                    if (!users[userIndex].quizzesTaken) {
+                         users[userIndex].quizzesTaken = [];
+                    }
+                    users[userIndex].quizzesTaken.push({
+                         quizId: currentQuiz.id,
+                         title: currentQuiz.title,
+                         score: score,
+                         totalQuestions: totalQuestions,
+                         date: new Date().toLocaleDateString()
+                    });
+                    localStorage.setItem('userData', JSON.stringify(users));
+                    currentUser = users[userIndex]; // Update global state
+               }
+          }
+
+          // --- UI Logic Functions ---
+          function addQuestionToEditor(question = null) {
+               const questionId = generateId();
+               const questionHtml = `
+                <div class="question-item p-4 border rounded-lg shadow-sm bg-gray-50 relative" data-id="${questionId}">
+                    <button type="button" class="absolute top-2 right-2 text-red-500 hover:text-red-700 delete-question-btn"><i class="fas fa-times-circle"></i></button>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Question</label>
+                        <input type="text" name="question" value="${question ? question.question : ''}" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" required>
+                    </div>
+                    <div class="space-y-2 mt-2 options-group">
+                        <p class="text-sm font-medium text-gray-700">Options (Select the correct one)</p>
+                        ${question ? question.options.map((opt, i) => `
+                            <div class="flex items-center space-x-2">
+                                <input type="radio" name="answer-${questionId}" value="${opt}" class="focus:ring-indigo-500 text-indigo-600" ${opt === question.answer ? 'checked' : ''} required>
+                                <input type="text" name="option" value="${opt}" class="block w-full border border-gray-300 rounded-md shadow-sm p-2" required>
+                            </div>
+                        `).join('') : `
+                            <div class="flex items-center space-x-2">
+                                <input type="radio" name="answer-${questionId}" class="focus:ring-indigo-500 text-indigo-600" required>
+                                <input type="text" name="option" class="block w-full border border-gray-300 rounded-md shadow-sm p-2" required>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <input type="radio" name="answer-${questionId}" class="focus:ring-indigo-500 text-indigo-600" required>
+                                <input type="text" name="option" class="block w-full border border-gray-300 rounded-md shadow-sm p-2" required>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <input type="radio" name="answer-${questionId}" class="focus:ring-indigo-500 text-indigo-600" required>
+                                <input type="text" name="option" class="block w-full border border-gray-300 rounded-md shadow-sm p-2" required>
+                            </div>
+                        `}
+                    </div>
+                </div>
+            `;
+               questionsContainer.insertAdjacentHTML('beforeend', questionHtml);
+
+               // Attach delete event listener
+               const newQuestion = questionsContainer.lastElementChild;
+               newQuestion.querySelector('.delete-question-btn').addEventListener('click', () => {
+                    newQuestion.remove();
+               });
+
+               // Update radio button value when text input changes
+               newQuestion.querySelectorAll('input[name="option"]').forEach(input => {
+                    input.addEventListener('input', (e) => {
+                         const radio = e.target.previousElementSibling;
+                         radio.value = e.target.value;
+                    });
+               });
+          }
+
+          function loadAdminQuizList() {
+               adminQuizList.innerHTML = '';
+               const myQuizzes = quizzes.filter(q => q.authorId === currentUser.email);
+               if (myQuizzes.length === 0) {
+                    adminQuizList.innerHTML = '<p class="text-center text-gray-500">You have not created any quizzes yet.</p>';
+                    return;
+               }
+
+               myQuizzes.forEach(quiz => {
+                    const quizItem = document.createElement('div');
+                    quizItem.className = 'flex justify-between items-center p-4 bg-gray-100 rounded-lg shadow-sm';
+                    quizItem.innerHTML = `
+                    <span class="font-semibold text-gray-800">${quiz.title} (${quiz.difficulty}) - For: ${quiz.targetRole.charAt(0).toUpperCase() + quiz.targetRole.slice(1)}</span>
+                    <div>
+                        <button class="text-blue-500 hover:text-blue-700 mr-2 edit-quiz-btn" data-id="${quiz.id}"><i class="fas fa-edit"></i></button>
+                        <button class="text-red-500 hover:text-red-700 delete-quiz-btn" data-id="${quiz.id}"><i class="fas fa-trash-alt"></i></button>
+                    </div>
+                `;
+                    adminQuizList.appendChild(quizItem);
+               });
+          }
+
+          function loadUserQuizList() {
+               userQuizListContainer.innerHTML = '';
+               const filteredQuizzes = quizzes.filter(quiz => quiz.targetRole === currentUser.role);
+
+               if (filteredQuizzes.length === 0) {
+                    userQuizListContainer.innerHTML = '<p class="text-center text-gray-500">No quizzes available for your role yet.</p>';
+                    return;
+               }
+
+               filteredQuizzes.forEach(quiz => {
+                    const quizItem = document.createElement('div');
+                    quizItem.className = 'flex justify-between items-center p-4 bg-gray-100 rounded-lg shadow-sm';
+                    quizItem.innerHTML = `
+                    <span class="font-semibold text-gray-800">${quiz.title} <span class="text-sm text-gray-500">(${quiz.difficulty})</span></span>
+                    <button class="bg-indigo-600 text-white px-4 py-2 rounded-full hover:bg-indigo-700 start-quiz-btn" data-id="${quiz.id}">Start Quiz</button>
+                `;
+                    userQuizListContainer.appendChild(quizItem);
+               });
+          }
+
+          function startTimer() {
+               let timeLeft = QUIZ_DURATION;
+               quizTimerDisplay.textContent = `${timeLeft}s`;
+               if (timer) clearInterval(timer);
+               timer = setInterval(() => {
+                    timeLeft--;
+                    quizTimerDisplay.textContent = `${timeLeft}s`;
+                    if (timeLeft <= 0) {
+                         clearInterval(timer);
+                         submitQuiz();
+                    }
+               }, 1000);
+          }
+
+          function loadQuestion() {
+               if (currentQuestionIndex >= currentQuiz.questions.length) {
+                    submitQuiz();
+                    return;
+               }
+
+               const question = currentQuiz.questions[currentQuestionIndex];
+               quizTitleDisplay.textContent = currentQuiz.title;
+               questionText.textContent = `${currentQuestionIndex + 1}. ${question.question}`;
+               optionsContainer.innerHTML = '';
+               question.options.forEach((opt, index) => {
+                    const optionButton = document.createElement('button');
+                    optionButton.className = 'w-full text-left p-4 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors shadow-sm';
+                    optionButton.textContent = opt;
+                    optionButton.dataset.index = index;
+                    optionsContainer.appendChild(optionButton);
+               });
+               updateProgressBar();
+          }
+
+          function checkAnswer(selectedAnswer, correctAns) {
+               const allOptions = optionsContainer.querySelectorAll('button');
+               allOptions.forEach(btn => {
+                    btn.disabled = true;
+                    if (btn.textContent === selectedAnswer) {
+                         if (selectedAnswer === correctAns) {
+                              btn.classList.add('bg-green-500', 'text-white');
+                              userAnswers[currentQuestionIndex] = selectedAnswer;
+                         } else {
+                              btn.classList.add('bg-red-500', 'text-white');
+                         }
+                    }
+                    if (btn.textContent === correctAns) {
+                         btn.classList.add('bg-green-500', 'text-white');
+                    }
+               });
+
+               setTimeout(() => {
+                    currentQuestionIndex++;
+                    if (currentQuestionIndex < currentQuiz.questions.length) {
+                         loadQuestion();
+                    } else {
+                         submitQuiz();
+                    }
+               }, 1500);
+          }
+
+          function submitQuiz() {
+               if (timer) clearInterval(timer);
+               let score = 0;
+               currentQuiz.questions.forEach((q, index) => {
+                    if (userAnswers[index] === q.answer) {
+                         score++;
+                    }
+               });
+               showResultSection(score, currentQuiz.questions.length);
+          }
+
+          function updateProgressBar() {
+               const progress = (currentQuestionIndex / currentQuiz.questions.length) * 100;
+               progressBar.style.width = `${progress}%`;
+          }
+
+          // --- Event Listeners ---
+          document.addEventListener('click', (e) => {
+               if (e.target.closest('.start-quiz-btn')) {
+                    const quizId = e.target.closest('.start-quiz-btn').dataset.id;
+                    currentQuiz = quizzes.find(q => q.id === quizId);
+                    showQuizSection();
+               }
+
+               if (e.target.closest('.edit-quiz-btn')) {
+                    const quizId = e.target.closest('.edit-quiz-btn').dataset.id;
+                    const quizToEdit = quizzes.find(q => q.id === quizId);
+                    showQuizEditor(quizToEdit);
+               }
+
+               if (e.target.closest('.delete-quiz-btn')) {
+                    const quizId = e.target.closest('.delete-quiz-btn').dataset.id;
+                    showMessageBox('Are you sure you want to delete this quiz?', (confirmed) => {
+                         if (confirmed) {
+                              quizzes = quizzes.filter(q => q.id !== quizId);
+                              localStorage.setItem('quizData', JSON.stringify(quizzes));
+                              loadAdminQuizList();
+                              showMessageBox('Quiz deleted successfully.');
+                         }
+                    });
+               }
+
+               if (e.target.matches('#select-teacher-btn')) {
+                    showAuthChoice('teacher');
+               }
+
+               if (e.target.matches('#select-student-btn')) {
+                    showAuthChoice('student');
+               }
+
+               if (e.target.matches('#select-general-btn')) {
+                    showAuthChoice('general');
+               }
+          });
+
+          optionsContainer.addEventListener('click', (e) => {
+               if (e.target.matches('button')) {
+                    const selectedAnswer = e.target.textContent;
+                    const correctAnswer = currentQuiz.questions[currentQuestionIndex].answer;
+                    checkAnswer(selectedAnswer, correctAnswer);
+               }
+          });
+
+
+          document.getElementById('goto-login-btn').addEventListener('click', showLogin);
+          document.getElementById('goto-register-btn').addEventListener('click', showRegistration);
+          document.getElementById('auth-choice-back-btn').addEventListener('click', showRoleSelection);
+          document.getElementById('back-to-auth-choice').addEventListener('click', () => showAuthChoice(loginRole));
+          document.getElementById('back-to-auth-choice-from-register').addEventListener('click', () => showAuthChoice(loginRole));
+
+          document.getElementById('forgot-password-btn').addEventListener('click', () => {
+               passwordRecoveryBox.classList.remove('hidden');
+          });
+
+          document.getElementById('recover-cancel-btn').addEventListener('click', () => {
+               passwordRecoveryBox.classList.add('hidden');
+          });
+
+          document.getElementById('recover-submit-btn').addEventListener('click', () => {
+               const email = recoveryEmailInput.value;
+               const foundUser = users.find(u => u.email === email);
+               if (foundUser) {
+                    showMessageBox('A password reset link has been sent to your email.');
+               } else {
+                    showMessageBox('Email not found. Please try again or register.');
+               }
+               passwordRecoveryBox.classList.add('hidden');
+               recoveryEmailInput.value = '';
+          });
+
+          loginForm.addEventListener('submit', (e) => {
+               e.preventDefault();
+               const email = document.getElementById('email').value;
+               const password = document.getElementById('password').value;
+               const foundUser = users.find(u => u.email === email && u.password === password);
+
+               if (foundUser) {
+                    currentUser = foundUser;
+                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                    if (currentUser.role === 'teacher') {
+                         showTeacherDashboard();
+                    } else {
+                         showUserDashboard();
+                    }
+                    clearAuthForms();
+               } else {
+                    showMessageBox('Invalid email or password. Please try again.');
+               }
+          });
+
+          registerForm.addEventListener('submit', (e) => {
+               e.preventDefault();
+               const name = document.getElementById('register-name').value;
+               const email = document.getElementById('register-email').value;
+               const password = document.getElementById('register-password').value;
+
+               const existingUser = users.find(u => u.email === email);
+               if (existingUser) {
+                    showMessageBox('This email is already registered. Please log in.');
+                    return;
+               }
+
+               const newUser = {
+                    email,
+                    password,
+                    name,
+                    role: loginRole || 'general', // Default to general if not specified
+                    quizzesTaken: []
+               };
+
+               users.push(newUser);
+               localStorage.setItem('userData', JSON.stringify(users));
+               currentUser = newUser;
+               localStorage.setItem('currentUser', JSON.stringify(currentUser));
+
+               showMessageBox('Registration successful! Please log in with your new account.', () => {
+                    showLogin();
+               });
+               clearAuthForms();
+          });
+
+          document.getElementById('teacher-logout-btn').addEventListener('click', () => {
+               localStorage.removeItem('currentUser');
+               currentUser = null;
+               showRoleSelection();
+               clearAuthForms();
+          });
+
+          document.getElementById('user-logout-btn').addEventListener('click', () => {
+               localStorage.removeItem('currentUser');
+               currentUser = null;
+               showRoleSelection();
+               clearAuthForms();
+          });
+
+          document.getElementById('user-profile-btn').addEventListener('click', showProfileSection);
+          document.getElementById('profile-back-btn').addEventListener('click', showUserDashboard);
+
+
+          document.getElementById('create-quiz-btn').addEventListener('click', () => showQuizEditor());
+          document.getElementById('manage-quizzes-btn').addEventListener('click', showAdminQuizList);
+
+          document.getElementById('admin-back-btn').addEventListener('click', showTeacherDashboard);
+          document.getElementById('quiz-back-btn').addEventListener('click', showUserDashboard);
+
+
+          document.getElementById('add-question-btn').addEventListener('click', () => addQuestionToEditor());
+
+          quizEditorForm.addEventListener('submit', (e) => {
+               e.preventDefault();
+               const quizTitle = quizTitleInput.value;
+               const quizDifficulty = quizDifficultyInput.value;
+               const quizTargetRole = quizTargetRoleSelect.value;
+               const questions = [];
+               document.querySelectorAll('.question-item').forEach(qItem => {
+                    const questionText = qItem.querySelector('input[name="question"]').value;
+                    const options = Array.from(qItem.querySelectorAll('input[name="option"]')).map(opt => opt.value);
+
+                    // Bug Fix: Get the value from the checked radio button's adjacent input field
+                    const checkedRadio = qItem.querySelector('input[name^="answer-"]:checked');
+                    const answer = checkedRadio ? checkedRadio.nextElementSibling.value : '';
+
+                    if (questionText && options.every(o => o) && answer) {
+                         questions.push({ question: questionText, options, answer });
+                    }
+               });
+
+               if (questions.length === 0) {
+                    showMessageBox('Please add at least one valid question with an answer.');
+                    return;
+               }
+
+               const quizId = quizEditorForm.dataset.quizId || generateId();
+               const existingQuizIndex = quizzes.findIndex(q => q.id === quizId);
+               const newQuiz = {
+                    id: quizId,
+                    title: quizTitle,
+                    difficulty: quizDifficulty,
+                    questions,
+                    authorId: currentUser.email,
+                    targetRole: quizTargetRole
+               };
+
+               if (existingQuizIndex !== -1) {
+                    quizzes[existingQuizIndex] = newQuiz;
+               } else {
+                    quizzes.push(newQuiz);
+               }
+
+               localStorage.setItem('quizData', JSON.stringify(quizzes));
+               showMessageBox('Quiz saved successfully!', () => {
+                    showAdminQuizList();
+               });
+          });
+
+          document.getElementById('cancel-editor-btn').addEventListener('click', showTeacherDashboard);
+
+          document.getElementById('retake-quiz-btn').addEventListener('click', () => {
+               userAnswers = [];
+               currentQuestionIndex = 0;
+               showQuizSection();
+          });
+
+          document.getElementById('back-to-main-btn').addEventListener('click', showUserDashboard);
+
+          // --- Initial Load ---
+          document.addEventListener('DOMContentLoaded', () => {
+               const storedCurrentUser = localStorage.getItem('currentUser');
+               if (storedCurrentUser) {
+                    currentUser = JSON.parse(storedCurrentUser);
+                    const foundUser = users.find(u => u.email === currentUser.email);
+                    if (foundUser) {
+                         currentUser = foundUser;
+                         if (currentUser.role === 'teacher') {
+                              showTeacherDashboard();
+                         } else {
+                              showUserDashboard();
+                         }
+                    } else {
+                         localStorage.removeItem('currentUser');
+                         showRoleSelection();
+                    }
+               } else {
+                    showRoleSelection();
+               }
+               clearAuthForms();
+          });
+     </script>
+</body>
+
+</html>
